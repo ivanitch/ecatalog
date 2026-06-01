@@ -32,19 +32,13 @@ line-length = 119
 exclude = '''
 /(
     \.git
-  | tests
 )/
 '''
 
 [tool.isort]
 line_length = 119
 profile = "black"
-skip_glob = ["tests/*", "test.py"]
 
 [tool.mypy]
 disallow_untyped_defs = true
 warn_return_any = true
-exclude = [
-    "tests/",
-    "test\\.py",
-]

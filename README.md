@@ -1,0 +1,22 @@
+# ECatalog
+
+Учебный проект по созданию системы управления каталогом товаров на Python, разработанный в рамках курса
+«Python-разработчик с нуля» от онлайн-университета Skypro.
+
+
+---
+
+## Кодстайл
+
+```bash
+poetry run flake8 src tests          # линтер
+poetry run black src tests           # форматирование
+poetry run isort src tests           # сортировка импортов
+poetry run mypy src                  # проверка типов
+```
+
+Или запустить все линтеры одной командой:
+
+```bash
+poetry run ./lint.sh
+```

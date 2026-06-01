@@ -3,7 +3,7 @@ name = "ecatalog"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Sergey Ivanov",email = "ivanitch.mail@gmail.com"}
+    { name = "Sergey Ivanov", email = "ivanitch.mail@gmail.com" }
 ]
 readme = "README.md"
 requires-python = ">=3.12"
@@ -11,7 +11,40 @@ dependencies = [
     "django (>=6.0.5,<7.0.0)"
 ]
 
-
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest-cov (>=7.1.0,<8.0.0)",
+    "pytest (>=9.0.3,<10.0.0)"
+]
+lint = [
+    "flake8 (>=7.3.0,<8.0.0)",
+    "black (>=26.5.1,<27.0.0)",
+    "isort (>=8.0.1,<9.0.0)",
+    "mypy (>=2.1.0,<3.0.0)"
+]
+
+[tool.black]
+line-length = 119
+exclude = '''
+/(
+    \.git
+  | tests
+)/
+'''
+
+[tool.isort]
+line_length = 119
+profile = "black"
+skip_glob = ["tests/*", "test.py"]
+
+[tool.mypy]
+disallow_untyped_defs = true
+warn_return_any = true
+exclude = [
+    "tests/",
+    "test\\.py",
+]

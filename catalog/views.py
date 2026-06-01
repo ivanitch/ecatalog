@@ -1,3 +1,9 @@
+from  django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-# Create your views here.
+def index(request: HttpRequest) -> HttpResponse:
+    return render(request, 'catalog/index.html')
+
+
+def contacts(request: HttpRequest) -> HttpResponse:
+    return render(request, 'catalog/contacts.html')

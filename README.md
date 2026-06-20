@@ -25,3 +25,11 @@ poetry run python manage.py createsuperuser
 ```bash
 poetry run python manage.py shell -i ipython
 ```
+
+## Фикстуры
+```bash
+poetry run python manage.py dumpdata catalog.Category --indent 4 > catalog/fixtures/categories.json
+poetry run python manage.py dumpdata catalog.Product --indent 4 > catalog/fixtures/products.json
+
+poetry run python manage.py fill_db
+```

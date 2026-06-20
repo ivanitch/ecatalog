@@ -8,6 +8,10 @@
 ```bash
 # Запуск сервера
 poetry run python manage.py runserver
+
+# Миграции
+python manage.py makemigrations
+python manage.py migrate
 ```
 
 

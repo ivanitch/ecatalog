@@ -21,19 +21,7 @@ poetry run python manage.py migrate
 poetry run python manage.py createsuperuser
 ```
 
-
-
-## Кодстайл
-
+## Django shell
 ```bash
-poetry run flake8 src tests          # линтер
-poetry run black src tests           # форматирование
-poetry run isort src tests           # сортировка импортов
-poetry run mypy src                  # проверка типов
-```
-
-Или запустить все линтеры одной командой:
-
-```bash
-poetry run ./lint.sh
+poetry run python manage.py shell -i ipython
 ```

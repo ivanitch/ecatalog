@@ -11,7 +11,8 @@ dependencies = [
     "django (>=6.0.5,<7.0.0)",
     "python-dotenv (>=1.2.2,<2.0.0)",
     "psycopg (>=3.3.4,<4.0.0)",
-    "pillow (>=12.2.0,<13.0.0)"
+    "pillow (>=12.2.0,<13.0.0)",
+    "ipython (>=9.14.1,<10.0.0)"
 ]
 
 [build-system]

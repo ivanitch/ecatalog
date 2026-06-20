@@ -10,8 +10,15 @@
 poetry run python manage.py runserver
 
 # Миграции
-python manage.py makemigrations
-python manage.py migrate
+poetry run python manage.py makemigrations
+poetry run python manage.py migrate
+```
+
+## Админка
+
+```bash
+# (admin: admin)
+poetry run python manage.py createsuperuser
 ```
 
 

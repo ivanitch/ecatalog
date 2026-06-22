@@ -1,10 +1,13 @@
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
+from catalog.models import Product
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "index.html")
+    latest_products = Product.objects.order_by('-created_at')[:5]
+    print(latest_products)  # вывод в консоль сервера
+    return render(request, "index.html", {"products": latest_products})
 
 
 def contacts(request: HttpRequest) -> HttpResponse:

@@ -116,3 +116,5 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+PER_PAGE = int(os.getenv("PER_PAGE", 15))

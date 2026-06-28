@@ -1,12 +1,18 @@
 from django.contrib import messages
+from django.conf import settings
+from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+
 from catalog.models import Product
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    products = Product.objects.all()
-    return render(request, "index.html", {"products": products})
+    all_products = Product.objects.all()
+    paginator = Paginator(all_products, settings.PER_PAGE)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(request, "index.html", {"products": page_obj})
 
 
 def contacts(request: HttpRequest) -> HttpResponse:

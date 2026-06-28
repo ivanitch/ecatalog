@@ -9,7 +9,7 @@
 </div>
 
 <div class="row text-center">
-{% for product in products %}
+    {% for product in products %}
     <div class="col-3">
         <div class="card mb-4 box-shadow">
             <div class="card-header">
@@ -17,7 +17,7 @@
             </div>
             <div class="card-body">
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" class="img-fluid mb-2" alt="{{ product.name }}">
+                <img src="{{ product.image.url }}" class="img-fluid mb-2" alt="{{ product.name }}">
                 {% endif %}
                 <h1 class="card-title pricing-card-title">{{ product.price }} ₽</h1>
                 <p class="text-muted">{{ product.description|truncatechars:100 }}</p>
@@ -26,8 +26,47 @@
             </div>
         </div>
     </div>
-{% empty %}
+    {% empty %}
     <p class="text-muted">Продукты не найдены.</p>
-{% endfor %}
+    {% endfor %}
+
+    {% if products.has_other_pages %}
+    <nav class="mt-4 d-flex justify-content-center">
+        <ul class="pagination">
+            {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ products.previous_page_number }}">&laquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+            {% endif %}
+
+            {% for num in products.paginator.page_range %}
+            {% if products.number == num %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > products.number|add:"-3" and num < products.number|add:"3" %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ products.next_page_number }}">&raquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 {% endblock %}

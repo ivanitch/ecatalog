@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} — Skystore{% endblock %}
+
+{% block content %}
+<a href="{% url 'blog:post_list' %}" class="btn btn-outline-secondary mb-3">&larr; Назад</a>
+
+<div class="card">
+    {% if post.preview %}
+        <img src="{{ post.preview.url }}" class="card-img-top" alt="{{ post.title }}"
+             style="max-height: 400px; object-fit: cover;">
+    {% endif %}
+    <div class="card-body">
+        <h2 class="card-title">{{ post.title }}</h2>
+        <p class="text-muted">{{ post.created_at|date:"d.m.Y H:i" }} &middot; {{ post.views_count }} просмотров</p>
+        <div class="card-text">{{ post.content|linebreaks }}</div>
+        <a href="{% url 'blog:post_edit' post.pk %}" class="btn btn-outline-primary">Редактировать</a>
+        <a href="{% url 'blog:post_delete' post.pk %}" class="btn btn-outline-danger">Удалить</a>
+    </div>
+</div>
+{% endblock %}

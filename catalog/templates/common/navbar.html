@@ -2,7 +2,10 @@
     <a href="/" class="brand"><h5 class="my-0 mr-md-auto font-weight-normal">Skystore</h5></a>
     <nav class="ms-5">
         <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Каталог</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:category_list' %}">Категории</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>
-        <a class="p-2 btn btn-primary" href="{% url 'catalog:product_create' %}">+ Добавить</a>
+        <span class="link-separator">•</span>
+        <a class="p-2 btn btn-primary" href="{% url 'catalog:category_create' %}">+ Добавить категорию</a>
+        <a class="p-2 btn btn-primary" href="{% url 'catalog:product_create' %}">+ Добавить товар</a>
     </nav>
 </div>

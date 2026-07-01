@@ -5,7 +5,9 @@
         <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:category_list' %}">Категории</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>
         <span class="link-separator">•</span>
-        <a class="p-2 btn btn-primary" href="{% url 'catalog:category_create' %}">+ Добавить категорию</a>
-        <a class="p-2 btn btn-primary" href="{% url 'catalog:product_create' %}">+ Добавить товар</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'admin:index' %}" target="_blank">Админка</a>
+        <span class="link-separator">•</span>
+        <a class="p-2 btn btn-info" href="{% url 'catalog:category_create' %}">+ Добавить категорию</a>
+        <a class="p-2 btn btn-info" href="{% url 'catalog:product_create' %}">+ Добавить товар</a>
     </nav>
 </div>

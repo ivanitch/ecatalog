@@ -3,13 +3,13 @@
 {% block title %}{{ product.name }} — Skystore{% endblock %}
 
 {% block content %}
+{% load static %}
 <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary mb-3">&larr; Назад</a>
 
 <div class="card">
-    {% if product.image %}
-        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}"
-             style="max-height: 400px; object-fit: contain;">
-    {% endif %}
+    <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/default_image.png' %}{% endif %}"
+     class="card-img-top" alt="{{ product.name }}"
+     style="max-height: 400px; object-fit: contain;">
     <div class="card-body">
         <h2 class="card-title">{{ product.name }}</h2>
         <h4 class="text-primary">{{ product.price }} ₽</h4>

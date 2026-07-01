@@ -9,14 +9,14 @@
                 <h5>Категории</h5>
                 <ul class="list-unstyled text-small">
                     {% for category in footer_categories %}
-                    <li><a class="text-muted" href="#">{{ category.name }}</a></li>
+                    <li><a class="text-muted" href="{% url 'catalog:category_detail' category.id %}">{{ category.name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
             <div class="col-6 col-md">
                 <h5>О нас</h5>
                 <ul class="list-unstyled text-small">
-                    <li><a class="text-muted" href="/contacts/">Контакты</a></li>
+                    <li><a class="text-muted" href="{% url 'catalog:contacts' %}">Контакты</a></li>
                 </ul>
             </div>
         </div>

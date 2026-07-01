@@ -2,3 +2,7 @@ a.brand {
     text-decoration: none;
     color: #6f42c1;
 }
+
+.link-separator {
+    margin: 0 5px;
+}

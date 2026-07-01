@@ -62,6 +62,19 @@ p.save()
 p.delete()
 ```
 
+## Блог
+
+Раздел для SEO - статьи с превью-изображением, счётчиком просмотров и признаком публикации.
+На главной странице списка отображаются только опубликованные статьи; счётчик просмотров
+увеличивается при открытии статьи. При достижении статьёй 100 просмотров на почту
+(`DEFAULT_FROM_EMAIL` в `.env`) отправляется уведомление.
+
+Доступен по адресу: [http://127.0.0.1:8000/blogs/](http://127.0.0.1:8000/blogs/)
+
+Для отправки писем в режиме разработки используется консольный backend
+(`EMAIL_BACKEND = django.core.mail.backends.console.EmailBackend`) — письма выводятся в консоль
+сервера, а не отправляются по-настоящему.
+
 ## Фикстуры
 
 Экспорт данных из БД:
@@ -69,6 +82,7 @@ p.delete()
 ```bash
 poetry run python manage.py dumpdata catalog.Category --indent 4 > catalog/fixtures/categories.json
 poetry run python manage.py dumpdata catalog.Product --indent 4 > catalog/fixtures/products.json
+poetry run python manage.py dumpdata blog.BlogPost --indent 4 > blog/fixtures/blog_posts.json
 ```
 
 Загрузка фикстур в БД:
@@ -76,6 +90,7 @@ poetry run python manage.py dumpdata catalog.Product --indent 4 > catalog/fixtur
 ```bash
 poetry run python manage.py loaddata catalog/fixtures/categories.json
 poetry run python manage.py loaddata catalog/fixtures/products.json
+poetry run python manage.py loaddata blog/fixtures/blog_posts.json
 ```
 
 ## Кастомная команда: заполнение БД

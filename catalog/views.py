@@ -1,10 +1,9 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.paginator import Paginator
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -16,48 +15,58 @@ from django.views.generic import (
 from catalog.models import Product, Category
 
 
-def index(request: HttpRequest) -> HttpResponse:
-    all_products = Product.objects.all()
-    paginator = Paginator(all_products, settings.PER_PAGE)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-    return render(request, "index.html", {"products": page_obj})
+class IndexListView(ListView):
+    """Каталог товаров с постраничной навигацией"""
+    model = Product
+    template_name = "index.html"
+    context_object_name = "products"
+
+    def get_paginate_by(self, queryset):
+        return settings.PER_PAGE
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if context.get("is_paginated"):
+            context["products"] = context["page_obj"]
+        return context
 
 
-def contacts(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
+class ContactsView(View):
+    """Страница контактов"""
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        return render(request, "contacts.html")
+
+    @staticmethod
+    def post(request, *args, **kwargs):
         name = request.POST.get("name")
         messages.success(request, f"Спасибо, {name}! Мы свяжемся с вами.")
         return redirect("catalog:contacts")
-    return render(request, "contacts.html")
 
 
-def product_detail(request: HttpRequest, pk: int) -> HttpResponse:
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, "product_detail.html", {"product": product})
+class ProductDetailView(DetailView):
+    model = Product
+    context_object_name = "product"
+    template_name = "product_detail.html"
 
 
-def product_create(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        name = request.POST.get("name")
-        description = request.POST.get("description")
-        price = request.POST.get("price")
-        image = request.FILES.get("image")
-        if name and price:
-            Product.objects.create(
-                name=name,
-                description=description,
-                price=price,
-                image=image,
-            )
-            messages.success(request, "Товар успешно добавлен!")
-            return redirect("catalog:home")
-        else:
-            messages.error(request, "Заполните обязательные поля.")
-    return render(request, "product_create.html")
+class ProductCreateView(SuccessMessageMixin, CreateView):
+    model = Product
+    fields = ["name", "description", "price", "image"]
+    template_name = "product_create.html"
+    success_url = reverse_lazy("catalog:home")
+    success_message = "Товар успешно добавлен!"
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        for field_name, field in form.fields.items():
+            if field_name != "image":
+                field.widget.attrs.update({"class": "form-control"})
+        return form
 
 
-"""CBV для Категорий"""
+"""Категории"""
 
 
 class CategoryListView(ListView):

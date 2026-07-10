@@ -31,20 +31,6 @@ class IndexListView(ListView):
         return context
 
 
-class ContactsView(View):
-    """Страница контактов"""
-
-    @staticmethod
-    def get(request, *args, **kwargs):
-        return render(request, "contacts.html")
-
-    @staticmethod
-    def post(request, *args, **kwargs):
-        name = request.POST.get("name")
-        messages.success(request, f"Спасибо, {name}! Мы свяжемся с вами.")
-        return redirect("catalog:contacts")
-
-
 class ProductDetailView(DetailView):
     model = Product
     context_object_name = "product"

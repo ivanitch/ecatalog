@@ -1,0 +1,12 @@
+{% extends "main/base.html" %}
+{% block title %}Удалить товар{% endblock %}
+{% block content %}
+<div class="card p-4" style="max-width: 600px;">
+    <h4>Удалить «{{ object.name }}»?</h4>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary ms-2">Отмена</a>
+    </form>
+</div>
+{% endblock %}

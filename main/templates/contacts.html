@@ -38,19 +38,25 @@
                     <form method="post" action="" class="form-floating">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="name">Имя</label>
-                            <input type="text" name="name" class="form-control" id="name" placeholder="Ваше имя"
-                                   required>
+                            <label for="{{ form.name.id_for_label }}">Имя</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
                         </div>
                         <div class="mb-3">
-                            <label for="phone">Телефон</label>
-                            <input type="text" name="phone" class="form-control" id="phone"
-                                   placeholder="Контактный телефон" required>
+                            <label for="{{ form.phone.id_for_label }}">Телефон</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                            <div class="text-danger">{{ form.phone.errors }}</div>
+                            {% endif %}
                         </div>
                         <div class="mb-3">
-                            <label for="message">Сообщение</label>
-                            <textarea type="text" name="message" class="form-control" id="message"
-                                      placeholder="Контактный телефон" required></textarea>
+                            <label for="{{ form.message.id_for_label }}">Сообщение</label>
+                            {{ form.message }}
+                            {% if form.message.errors %}
+                            <div class="text-danger">{{ form.message.errors }}</div>
+                            {% endif %}
                         </div>
                         <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отправить</button>
                     </form>

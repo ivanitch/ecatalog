@@ -1,9 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views import View
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -12,6 +10,7 @@ from django.views.generic import (
     DeleteView
 )
 
+from catalog.forms import ProductForm
 from catalog.models import Product, Category
 
 
@@ -39,17 +38,32 @@ class ProductDetailView(DetailView):
 
 class ProductCreateView(SuccessMessageMixin, CreateView):
     model = Product
-    fields = ["name", "description", "price", "image"]
+    form_class = ProductForm
     template_name = "product_create.html"
     success_url = reverse_lazy("catalog:home")
-    success_message = "Товар успешно добавлен!"
+    success_message = "Товар «%(name)s» успешно добавлен!"
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        for field_name, field in form.fields.items():
-            if field_name != "image":
-                field.widget.attrs.update({"class": "form-control"})
-        return form
+
+class ProductUpdateView(SuccessMessageMixin, UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = "product_create.html"
+    success_message = "Товар «%(name)s» успешно обновлён!"
+
+    def get_success_url(self):
+        from django.urls import reverse
+        return reverse("catalog:product_detail", kwargs={"pk": self.object.pk})
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = "product_confirm_delete.html"
+    success_url = reverse_lazy("catalog:home")
+
+    def delete(self, request, *args, **kwargs):
+        product = self.get_object()
+        messages.warning(request, f"Товар {product.name} был удалён.")
+        return super().delete(request, *args, **kwargs)
 
 
 """Категории"""

@@ -5,18 +5,22 @@
 {% block content %}
 {% load static %}
 <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary mb-3">&larr; Назад</a>
+<a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-outline-warning mb-3">Редактировать</a>
+<a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-outline-danger mb-3">Удалить</a>
 
 <div class="card">
     <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/default_image.png' %}{% endif %}"
-     class="card-img-top" alt="{{ product.name }}"
-     style="max-height: 400px; object-fit: contain;">
+         class="card-img-top" alt="{{ product.name }}"
+         style="max-height: 400px; object-fit: contain;">
     <div class="card-body">
         <h2 class="card-title">{{ product.name }}</h2>
         <h4 class="text-primary">{{ product.price }} ₽</h4>
         <p class="card-text">{{ product.description }}</p>
         {% if product.category %}
-            <p class="text-muted">Категория: {{ product.category }}</p>
+        <p class="text-muted">Категория: {{ product.category }}</p>
         {% endif %}
+        <p class="text-muted">Создано: {{ product.created_at|date:"d.m.Y H:i" }}</p>
+        <p class="text-muted">Обновлено: {{ product.updated_at|date:"d.m.Y H:i" }}</p>
         <button class="btn btn-primary btn-lg">Купить</button>
     </div>
 </div>

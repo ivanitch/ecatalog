@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -36,7 +37,7 @@ class ProductDetailView(DetailView):
     template_name = "product_detail.html"
 
 
-class ProductCreateView(SuccessMessageMixin, CreateView):
+class ProductCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = "product_create.html"
@@ -44,7 +45,7 @@ class ProductCreateView(SuccessMessageMixin, CreateView):
     success_message = "Товар «%(name)s» успешно добавлен!"
 
 
-class ProductUpdateView(SuccessMessageMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = "product_create.html"

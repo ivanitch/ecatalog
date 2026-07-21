@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
 from django.urls import reverse, reverse_lazy
@@ -13,13 +14,22 @@ from django.views.generic import (
 from .models import BlogPost
 
 
+class StaffRequiredMixin(UserPassesTestMixin):
+    """Миксин для проверки, является ли пользователь сотрудником (is_staff) или суперпользователем"""
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+
+
 class BlogPostListView(ListView):
     model = BlogPost
     template_name = "blog/blogpost_list.html"
     context_object_name = "posts"
 
     def get_queryset(self):
-        # выводим только опубликованные статьи
+        # Обычным пользователям показываем только опубликованные статьи.
+        # Персоналу (is_staff) можно показывать все статьи.
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return BlogPost.objects.all()
         return BlogPost.objects.filter(is_published=True)
 
 
@@ -44,7 +54,7 @@ class BlogPostDetailView(DetailView):
         return obj
 
 
-class BlogPostCreateView(SuccessMessageMixin, CreateView):
+class BlogPostCreateView(LoginRequiredMixin, StaffRequiredMixin, SuccessMessageMixin, CreateView):
     model = BlogPost
     fields = ["title", "content", "preview", "is_published"]
     template_name = "blog/blogpost_form.html"
@@ -61,14 +71,13 @@ class BlogPostCreateView(SuccessMessageMixin, CreateView):
         return form
 
 
-class BlogPostUpdateView(SuccessMessageMixin, UpdateView):
+class BlogPostUpdateView(LoginRequiredMixin, StaffRequiredMixin, SuccessMessageMixin, UpdateView):
     model = BlogPost
     fields = ["title", "content", "preview", "is_published"]
     template_name = "blog/blogpost_form.html"
     success_message = "Статья успешно обновлена!"
 
     def get_success_url(self):
-        # после редактирования — на страницу этой же статьи
         return reverse("blog:post_detail", kwargs={"pk": self.object.pk})
 
     def get_form(self, form_class=None):
@@ -79,7 +88,7 @@ class BlogPostUpdateView(SuccessMessageMixin, UpdateView):
         return form
 
 
-class BlogPostDeleteView(DeleteView):
+class BlogPostDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
     model = BlogPost
     template_name = "blog/blogpost_confirm_delete.html"
     success_url = reverse_lazy("blog:post_list")

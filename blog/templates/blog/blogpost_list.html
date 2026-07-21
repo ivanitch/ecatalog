@@ -5,7 +5,9 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Блог</h1>
-    <a href="{% url 'blog:post_create' %}" class="btn btn-primary">+ Новая статья</a>
+    {% if user.is_staff or user.is_superuser %}
+        <a href="{% url 'blog:post_create' %}" class="btn btn-primary">+ Новая статья</a>
+    {% endif %}
 </div>
 
 <div class="row">

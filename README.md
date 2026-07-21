@@ -1,3 +1,8 @@
+Ниже актуализированный **README.md** с учётом всех изменений: кастомной модели пользователя (вход по **Email**),
+разграничения прав доступа для товаров и блога, а также обновлённых URL-адресов.
+
+---
+
 # ECatalog
 
 Учебный проект по созданию системы управления каталогом товаров на Python, разработанный в рамках курса
@@ -16,6 +21,7 @@ poetry run python manage.py migrate
 
 # Запуск сервера разработки
 poetry run python manage.py runserver
+
 ```
 
 ## Миграции
@@ -23,14 +29,24 @@ poetry run python manage.py runserver
 ```bash
 poetry run python manage.py makemigrations
 poetry run python manage.py migrate
+
 ```
+
+## Пользователи и Авторизация
+
+В проекте переопределена стандартная модель пользователя (`AUTH_USER_MODEL = 'users.User'`).
+
+* Поле `username` отключено, уникальным идентификатором для входа служит **Email**.
+* Добавлены дополнительные поля: `avatar`, `phone`, `country`.
+* При успешной регистрации пользователю отправляется приветственное письмо на указанный Email.
 
 ## Админка
 
-Создание суперпользователя (логин/пароль по умолчанию: `admin` / `admin`):
+Создание суперпользователя (вместо username запрашивается Email):
 
 ```bash
 poetry run python manage.py createsuperuser
+
 ```
 
 Панель доступна по адресу: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
@@ -39,16 +55,19 @@ poetry run python manage.py createsuperuser
 
 ```bash
 poetry run python manage.py shell -i ipython
+
 ```
 
 Примеры запросов в shell:
 
 ```python
 from catalog.models import Category, Product
+from users.models import User
 
 # Создание категорий и продуктов
 cat = Category.objects.create(name='Электроника', description='Гаджеты')
-Product.objects.create(name='Телефон', price=29999, category=cat)
+user = User.objects.first()
+Product.objects.create(name='Телефон', price=29999, category=cat, owner=user)
 
 # Получение данных
 Category.objects.all()
@@ -60,34 +79,41 @@ p = Product.objects.get(name='Телефон')
 p.price = 25999
 p.save()
 p.delete()
+
 ```
 
-## Каталог товаров
+## Каталог товаров и Права доступа
 
-Реализован полный CRUD для товаров (создание, просмотр, редактирование, удаление) через
-`django.forms.ModelForm`. Форма товара (`catalog/forms.py`) включает валидацию:
+Реализован полный CRUD для товаров (создание, просмотр, редактирование, удаление) через `django.forms.ModelForm`.
 
-- **Запрещённые слова** — название и описание товара не могут содержать слова из списка
-  `FORBIDDEN_WORDS` (казино, биржа, обман, криптовалюта, дешево, полиция, крипта, бесплатно, радар),
-  проверка регистронезависимая.
-- **Цена** — не может быть отрицательной.
-- **Изображение** — принимаются только файлы форматов JPEG и PNG размером не более 5 МБ.
+### Валидация формы (`catalog/forms.py`):
 
-При нарушении любого из условий форма возвращает понятное сообщение об ошибке рядом с
-соответствующим полем.
+* **Запрещённые слова** — название и описание товара не могут содержать слова из списка `FORBIDDEN_WORDS` (казино,
+  биржа, обман, криптовалюта, дешево, полиция, крипта, бесплатно, радар), проверка регистронезависимая.
+* **Цена** — не может быть отрицательной.
+* **Изображение** — принимаются только файлы форматов JPEG и PNG размером не более 5 МБ.
+
+### Разграничение прав доступа:
+
+* Каждый создаваемый товар привязывается к автору через поле `owner`.
+* Редактировать и удалять товар может только его **владелец** (`owner`), **суперпользователь**, либо пользователи с
+  соответствующими правами модератора (`catalog.change_product` / `can_change_product_description`).
+* Неавторизованные пользователи могут только просматривать каталог и детальную карточку товара.
 
 ## Блог
 
-Раздел для SEO - статьи с превью-изображением, счётчиком просмотров и признаком публикации.
-На главной странице списка отображаются только опубликованные статьи; счётчик просмотров
-увеличивается при открытии статьи. При достижении статьей 100 просмотров на почту
-(`DEFAULT_FROM_EMAIL` в `.env`) отправляется уведомление.
+Раздел для SEO — статьи с превью-изображением, счётчиком просмотров и признаком публикации.
 
-Доступен по адресу: [http://127.0.0.1:8000/blogs/](http://127.0.0.1:8000/blogs/)
+* В списке для обычных пользователей отображаются только опубликованные статьи (`is_published=True`).
+* Счётчик просмотров увеличивается при каждом открытии статьи. При достижении 100 просмотров отправляется уведомление на
+  почту (`DEFAULT_FROM_EMAIL`).
+* **Права доступа**: Создание, редактирование и удаление статей ограничено — доступно только персоналу (`is_staff=True`)
+  и суперпользователям.
 
-Для отправки писем в режиме разработки используется консольный backend
-(`EMAIL_BACKEND = django.core.mail.backends.console.EmailBackend`) — письма выводятся в консоль
-сервера, а не отправляются по-настоящему.
+Доступен по адресу: [http://127.0.0.1:8000/blog/](https://www.google.com/search?q=http://127.0.0.1:8000/blog/)
+
+Для отправки писем в режиме разработки используется консольный
+backend (`EMAIL_BACKEND = django.core.mail.backends.console.EmailBackend`) — письма выводятся в консоль сервера.
 
 ## Фикстуры
 
@@ -97,6 +123,7 @@ p.delete()
 poetry run python manage.py dumpdata catalog.Category --indent 4 > catalog/fixtures/categories.json
 poetry run python manage.py dumpdata catalog.Product --indent 4 > catalog/fixtures/products.json
 poetry run python manage.py dumpdata blog.BlogPost --indent 4 > blog/fixtures/blog_posts.json
+
 ```
 
 Загрузка фикстур в БД:
@@ -105,6 +132,7 @@ poetry run python manage.py dumpdata blog.BlogPost --indent 4 > blog/fixtures/bl
 poetry run python manage.py loaddata catalog/fixtures/categories.json
 poetry run python manage.py loaddata catalog/fixtures/products.json
 poetry run python manage.py loaddata blog/fixtures/blog_posts.json
+
 ```
 
 ## Кастомная команда: заполнение БД

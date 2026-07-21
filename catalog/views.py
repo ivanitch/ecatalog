@@ -1,8 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -31,10 +33,11 @@ class IndexListView(ListView):
         return context
 
 
+@method_decorator(cache_page(settings.CACHE_TTL), name='dispatch')
 class ProductDetailView(DetailView):
     model = Product
-    context_object_name = "product"
-    template_name = "product_detail.html"
+    context_object_name = 'product'
+    template_name = 'product_detail.html'
 
 
 class ProductCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

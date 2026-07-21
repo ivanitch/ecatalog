@@ -44,6 +44,10 @@ class ProductCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     success_url = reverse_lazy("catalog:home")
     success_message = "Товар «%(name)s» успешно добавлен!"
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
 
 class ProductUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Product
@@ -51,20 +55,30 @@ class ProductUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     template_name = "product_create.html"
     success_message = "Товар «%(name)s» успешно обновлён!"
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        user = self.request.user
+        if (obj.owner != user
+                and not user.is_superuser
+                and not user.has_perm('catalog.change_product')
+                and not user.has_perm('catalog.can_change_product_description')):
+            raise PermissionDenied("У вас нет прав для редактирования этого товара.")
+        return obj
+
     def get_success_url(self):
-        from django.urls import reverse
         return reverse("catalog:product_detail", kwargs={"pk": self.object.pk})
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     template_name = "product_confirm_delete.html"
     success_url = reverse_lazy("catalog:home")
 
-    def delete(self, request, *args, **kwargs):
-        product = self.get_object()
-        messages.warning(request, f"Товар {product.name} был удалён.")
-        return super().delete(request, *args, **kwargs)
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied("У вас нет прав для удаления этого товара.")
+        return obj
 
 
 """Категории"""

@@ -7,25 +7,28 @@
 <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
     <h1 class="display-4">Категории</h1>
 
+    {% if request.user.is_superuser or perms.catalog.add_category %}
     <div class="mb-3 text-end">
         <a href="{% url 'catalog:category_create' %}" class="btn btn-success">+ Добавить категорию</a>
     </div>
+    {% endif %}
 
     <ul class="list-group">
         {% for category in categories %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <a href="{% url 'catalog:category_detail' category.id %}">{{ category.name }}</a>
+
+            {% if request.user.is_superuser or perms.catalog.change_category %}
             <div>
                 <a href="{% url 'catalog:category_edit' category.id %}" class="btn btn-sm btn-warning">Редактировать</a>
-                <a href="{% url 'catalog:category_delete' category.id %}" class="btn btn-sm btn-danger">Удалить</a>
+                {% if request.user.is_superuser or perms.catalog.delete_category %}
+                    <a href="{% url 'catalog:category_delete' category.id %}" class="btn btn-sm btn-danger">Удалить</a>
+                {% endif %}
             </div>
+            {% endif %}
         </li>
         {% endfor %}
     </ul>
-</div>
-
-<div class="container">
-
 </div>
 
 {% endblock %}

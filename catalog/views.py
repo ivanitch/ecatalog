@@ -1,10 +1,8 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
+from django.urls import reverse_lazy, reverse
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -15,6 +13,7 @@ from django.views.generic import (
 
 from catalog.forms import ProductForm
 from catalog.models import Product, Category
+from catalog.services import ProductService
 
 
 class IndexListView(ListView):
@@ -33,11 +32,13 @@ class IndexListView(ListView):
         return context
 
 
-@method_decorator(cache_page(settings.CACHE_TTL), name='dispatch')
 class ProductDetailView(DetailView):
     model = Product
     context_object_name = 'product'
     template_name = 'product_detail.html'
+
+    def get_object(self, queryset=None):
+        return ProductService.get_product_from_cache(self.kwargs.get('pk'))
 
 
 class ProductCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -98,11 +99,17 @@ class CategoryDetailView(DetailView):
     context_object_name = 'category'
     template_name = 'category/category_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['products'] = ProductService.get_products_for_category(self.object.pk)
+        return context
 
-class CategoryCreateView(SuccessMessageMixin, CreateView):
+
+class CategoryCreateView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, CreateView):
     model = Category
     fields = ['name', 'description']
     template_name = 'category/category_form.html'
+    permission_required = 'catalog.add_category'
     success_url = reverse_lazy('catalog:category_list')
     success_message = "Категория %(name)s успешно создана!"
 
@@ -113,10 +120,11 @@ class CategoryCreateView(SuccessMessageMixin, CreateView):
         return form
 
 
-class CategoryUpdateView(SuccessMessageMixin, UpdateView):
+class CategoryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Category
     fields = ['name', 'description']
     template_name = 'category/category_form.html'
+    permission_required = 'catalog.change_category'
     success_url = reverse_lazy('catalog:category_list')
     success_message = "Категория %(name)s успешно обновлена!"
 
@@ -127,9 +135,10 @@ class CategoryUpdateView(SuccessMessageMixin, UpdateView):
         return form
 
 
-class CategoryDeleteView(DeleteView):
+class CategoryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Category
     template_name = 'category/category_confirm_delete.html'
+    permission_required = 'catalog.delete_category'
     success_url = reverse_lazy('catalog:category_list')
 
     def delete(self, request, *args, **kwargs):

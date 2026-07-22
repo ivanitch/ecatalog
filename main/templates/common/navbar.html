@@ -4,9 +4,7 @@
     </a>
     <nav class="ms-auto d-flex align-items-center gap-2 flex-wrap">
         <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Каталог</a>
-        {% if request.user.is_authenticated or request.user.is_superuser or perms.catalog.change_product or perms.catalog.can_change_product_description %}
-            <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:category_list' %}">Категории</a>
-        {% endif %}
+        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:category_list' %}">Категории</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'main:contacts' %}">Контакты</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'blog:post_list' %}">Блог</a>
 

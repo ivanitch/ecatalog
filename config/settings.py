@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv('DEBUG') == 'True' else False
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@skystore.local')
@@ -137,4 +137,5 @@ CACHES = {
     }
 }
 
+CACHE_ENABLED = os.getenv('CACHE_ENABLED', 'False') == 'True'
 CACHE_TTL = int(os.getenv('CACHE_TTL', 60))

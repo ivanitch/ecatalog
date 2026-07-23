@@ -13,7 +13,7 @@ from django.views.generic import (
 
 from catalog.forms import ProductForm
 from catalog.models import Product, Category
-from catalog.services import ProductService
+from catalog.services import ProductService, CategoryService
 
 
 class IndexListView(ListView):
@@ -92,6 +92,9 @@ class CategoryListView(ListView):
     model = Category
     context_object_name = "categories"
     template_name = "category/category_list.html"
+
+    def get_queryset(self):
+        return CategoryService.get_categories_from_cache()
 
 
 class CategoryDetailView(DetailView):

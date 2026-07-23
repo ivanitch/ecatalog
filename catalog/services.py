@@ -29,3 +29,19 @@ class ProductService:
             cache.set(key, products, settings.CACHE_TTL)
 
         return products
+
+
+class CategoryService:
+    @staticmethod
+    def get_categories_from_cache():
+        if not settings.CACHE_ENABLED:
+            return Category.objects.all()
+
+        key = 'category_list'
+        categories = cache.get(key)
+
+        if categories is None:
+            categories = Category.objects.all()
+            cache.set(key, categories, settings.CACHE_TTL)
+
+        return categories

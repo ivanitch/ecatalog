@@ -38,3 +38,21 @@ class ContactsView(SuccessMessageMixin, View):
         else:
             # Если форма невалидна, показываем ошибки
             return render(request, "contacts.html", {'form': form})
+
+
+class TestView(View):
+    @staticmethod
+    def get(request):
+        from django.core.cache import cache
+        from django.http import HttpResponse
+        data = cache.get('test')
+        if not data:
+            data = {
+                'name': 'John',
+                'age': 25,
+            }
+            cache.set('test', data, 60 * 15)
+        return render(request, "test.html", {"data": data})
+
+
+

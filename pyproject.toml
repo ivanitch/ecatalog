@@ -1,6 +1,6 @@
 [project]
 name = "ecatalog"
-version = "0.1.0"
+version = "1.0"
 description = "Учебный проект по созданию системы управления каталогом товаров"
 authors = [
     { name = "Sergey Ivanov", email = "ivanitch.mail@gmail.com" }
@@ -12,7 +12,8 @@ dependencies = [
     "python-dotenv (>=1.2.2,<2.0.0)",
     "psycopg (>=3.3.4,<4.0.0)",
     "pillow (>=12.2.0,<13.0.0)",
-    "ipython (>=9.14.1,<10.0.0)"
+    "ipython (>=9.14.1,<10.0.0)",
+    "redis (>=8.0.1,<9.0.0)"
 ]
 
 [build-system]

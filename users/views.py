@@ -35,7 +35,7 @@ class UserLoginView(LoginView):
     success_url = reverse_lazy('catalog:home')
 
 
-class UserLogoutView(LogoutView):
+class UserLogoutView(LoginRequiredMixin, LogoutView):
     next_page = reverse_lazy('catalog:home')
 
 
